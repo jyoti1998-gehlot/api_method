@@ -35,3 +35,21 @@ EOF
   }
 }
 
+resource "aws_api_gateway_deployment" "panda1" {
+  rest_api_id = aws_api_gateway_rest_api.panda.id
+
+  triggers = {
+   
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.healthcheck.id,
+      aws_api_gateway_method.panda1.id,
+      aws_api_gateway_integration.integration.id,
+    ]))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
